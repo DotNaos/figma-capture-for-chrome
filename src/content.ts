@@ -1,24 +1,42 @@
+import "./vendor/capture.js";
+
 type CaptureMessage = {
   type: "FIGMA_CAPTURE";
   captureId: string;
   endpoint: string;
 };
 
+type PrepareMessage = {
+  type: "FIGMA_CAPTURE_PREPARE";
+};
+
+type ContentExtensionMessage = CaptureMessage | PrepareMessage;
+
 type CaptureResponse = {
-  success: boolean;
+  accepted: boolean;
   error?: string;
 };
 
-type InjectedMessage = {
-  type: "FIGMA_CAPTURE_RESULT";
-  success: boolean;
-  error?: string;
+type ContentFigmaCaptureApi = {
+  captureForDesign: (args: {
+    captureId: string;
+    endpoint: string;
+    selector: string;
+  }) => Promise<unknown>;
 };
+
+type FigmaCaptureContentWindow = Window & typeof globalThis & {
+  __figmaCaptureListenerRegistered__?: boolean;
+  [key: string]: unknown;
+};
+
+const CAPTURE_GLOBAL = "__figmaCaptureExtension";
+const figmaCaptureWindow = globalThis as FigmaCaptureContentWindow;
 
 function parseHashConfig(): { captureId: string; endpoint: string } {
-  const hash = window.location.hash.startsWith("#")
-    ? window.location.hash.slice(1)
-    : window.location.hash;
+  const hash = globalThis.location.hash.startsWith("#")
+    ? globalThis.location.hash.slice(1)
+    : globalThis.location.hash;
   const params = new URLSearchParams(hash);
   return {
     captureId: params.get("figmacapture") ?? "",
@@ -26,52 +44,63 @@ function parseHashConfig(): { captureId: string; endpoint: string } {
   };
 }
 
-function injectScript(): void {
-  const existing = document.getElementById("figma-capture-injected");
-  if (existing) return;
-
-  const script = document.createElement("script");
-  script.id = "figma-capture-injected";
-  script.src = chrome.runtime.getURL("injected.js");
-  (document.head ?? document.documentElement).appendChild(script);
-  script.remove();
+function getCaptureApi(): ContentFigmaCaptureApi | undefined {
+  return figmaCaptureWindow[CAPTURE_GLOBAL] as ContentFigmaCaptureApi | undefined;
 }
 
-chrome.runtime.onMessage.addListener(
-  (
-    rawMessage: unknown,
-    _sender: chrome.runtime.MessageSender,
-    sendResponse: (response: CaptureResponse) => void,
-  ) => {
-    const message = rawMessage as CaptureMessage;
-    if (message.type !== "FIGMA_CAPTURE") return false;
+if (!figmaCaptureWindow.__figmaCaptureListenerRegistered__) {
+  chrome.runtime.onMessage.addListener(
+    (
+      rawMessage: unknown,
+      _sender: chrome.runtime.MessageSender,
+      sendResponse: (response: CaptureResponse) => void,
+    ) => {
+      const message = rawMessage as ContentExtensionMessage;
+      if (
+        message.type !== "FIGMA_CAPTURE"
+        && message.type !== "FIGMA_CAPTURE_PREPARE"
+      ) {
+        return;
+      }
 
-    injectScript();
+      const api = getCaptureApi();
+      if (!api?.captureForDesign) {
+        sendResponse({
+          accepted: false,
+          error: `Vendored capture.js did not expose globalThis.${CAPTURE_GLOBAL}.captureForDesign`,
+        });
+        return;
+      }
 
-    const hashConfig = parseHashConfig();
-    const resolvedCaptureId =
-      hashConfig.captureId || message.captureId;
-    const resolvedEndpoint =
-      hashConfig.endpoint || message.endpoint;
+      if (message.type === "FIGMA_CAPTURE_PREPARE") {
+        sendResponse({ accepted: true });
+        return;
+      }
 
-    const onResult = (event: MessageEvent<unknown>): void => {
-      const data = event.data as InjectedMessage;
-      if (data?.type !== "FIGMA_CAPTURE_RESULT") return;
-      window.removeEventListener("message", onResult);
-      sendResponse({ success: data.success, error: data.error });
-    };
+      try {
+        const hashConfig = parseHashConfig();
+        const resolvedCaptureId =
+          hashConfig.captureId || message.captureId;
+        const resolvedEndpoint =
+          hashConfig.endpoint || message.endpoint;
 
-    window.addEventListener("message", onResult);
+        void api.captureForDesign({
+          captureId: resolvedCaptureId,
+          endpoint: resolvedEndpoint,
+          selector: "body",
+        }).then(() => {
+          console.info("[Figma Capture] Capture completed.");
+        }).catch((error) => {
+          console.error("[Figma Capture] Capture failed:", error);
+        });
 
-    window.postMessage(
-      {
-        type: "FIGMA_CAPTURE_REQUEST",
-        captureId: resolvedCaptureId,
-        endpoint: resolvedEndpoint,
-      },
-      "*",
-    );
+        sendResponse({ accepted: true });
+      } catch (err) {
+        const error = err instanceof Error ? err.message : String(err);
+        sendResponse({ accepted: false, error });
+      }
+    },
+  );
 
-    return true;
-  },
-);
+  figmaCaptureWindow.__figmaCaptureListenerRegistered__ = true;
+}

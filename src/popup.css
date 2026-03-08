@@ -1,129 +1,89 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+@import 'tailwindcss';
+
+@source "./src/**/*.{html,ts}";
+
+@layer base {
+    :root {
+        color-scheme: dark;
+    }
+
+    body {
+        @apply m-0 antialiased text-white;
+        background: #1f1f1f;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
 }
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 14px;
-  background: #1e1e1e;
-  color: #e8e8e8;
-  min-width: 280px;
-}
+@layer components {
+    .popup-shell {
+        @apply w-80 p-0;
+    }
 
-.container {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+    .popup-card {
+        @apply flex flex-col gap-4 overflow-hidden rounded-[8px] bg-[#2c2c2c] py-4;
+    }
 
-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+    .popup-header {
+        @apply flex items-center justify-between px-4;
+    }
 
-.logo {
-  width: 24px;
-  height: 36px;
-  flex-shrink: 0;
-}
+    .figma-mark {
+        @apply flex h-8 w-8 items-center justify-center;
+    }
 
-h1 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-}
+    .primary-button {
+        @apply inline-flex h-8 items-center justify-center gap-2 rounded-[6px] border border-[#2a9bf0] bg-[#0c8ce9] px-3 text-[11px] leading-4 font-normal tracking-[0.005em] text-white transition hover:bg-[#1b97ef] focus:outline-none focus:ring-2 focus:ring-[#63b7f8]/40 disabled:cursor-not-allowed disabled:opacity-70;
+    }
 
-h2 {
-  margin: 0 0 8px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #aaa;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
+    .secondary-button {
+        @apply inline-flex h-8 items-center justify-center gap-1 rounded-[5px] border border-white/6 bg-transparent px-2.5 text-[11px] leading-4 font-normal tracking-[0.005em] text-white transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-white/10;
+    }
 
-.btn-primary {
-  width: 100%;
-  padding: 10px 16px;
-  background: #18a0fb;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
-}
+    .button-icon {
+        @apply inline-flex h-[18px] w-[18px] items-center justify-center;
+    }
 
-.btn-primary:hover:not(:disabled) {
-  background: #0d8de3;
-}
+    .button-icon svg {
+        @apply h-full w-full;
+    }
 
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+    .button-icon--small {
+        @apply h-4 w-4;
+    }
 
-.btn-secondary {
-  padding: 7px 12px;
-  background: #3c3c3c;
-  color: #e8e8e8;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
+    .config-section {
+        @apply flex flex-col border-t border-[#444444] pt-0;
+    }
 
-.btn-secondary:hover {
-  background: #4a4a4a;
-}
+    .config-heading-row {
+        @apply flex items-center px-4 py-3;
+    }
 
-.status {
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-}
+    .config-heading {
+        @apply m-0 text-[11px] leading-4 font-semibold tracking-[0.01em] text-white;
+    }
 
-.status.success {
-  background: #1a3a2a;
-  color: #4ade80;
-}
+    .field-stack {
+        @apply flex flex-col gap-2 px-4 py-1;
+    }
 
-.status.error {
-  background: #3a1a1a;
-  color: #f87171;
-}
+    .field-input {
+        @apply h-8 w-full rounded-[5px] border border-[#383838] bg-[#383838] px-[7px] text-[11px] leading-4 font-normal text-white outline-none transition placeholder:text-white/50 focus:border-[#4b4b4b] focus:ring-2 focus:ring-white/6;
+    }
 
-.config {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  border-top: 1px solid #333;
-  padding-top: 12px;
-}
+    .status-banner {
+        @apply mx-4 rounded-[6px] border px-3 py-2 text-[11px] leading-4 font-normal shadow-lg;
+    }
 
-label {
-  font-size: 12px;
-  color: #aaa;
-}
+    .status-success {
+        @apply border-emerald-500/20 bg-emerald-500/10 text-emerald-100;
+    }
 
-input[type="text"] {
-  width: 100%;
-  padding: 7px 10px;
-  background: #2a2a2a;
-  border: 1px solid #444;
-  border-radius: 6px;
-  color: #e8e8e8;
-  font-size: 13px;
-  outline: none;
-}
+    .status-error {
+        @apply border-rose-500/20 bg-rose-500/10 text-rose-100;
+    }
 
-input[type="text"]:focus {
-  border-color: #18a0fb;
+    .save-row {
+        @apply flex justify-end px-4;
+    }
 }

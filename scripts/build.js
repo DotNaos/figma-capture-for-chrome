@@ -1,36 +1,51 @@
 // @ts-check
-import esbuild from "esbuild";
-import { cpSync, mkdirSync } from "fs";
+import esbuild from 'esbuild';
+import { execFileSync } from 'node:child_process';
+import { cpSync, mkdirSync, rmSync } from 'node:fs';
 
-mkdirSync("dist", { recursive: true });
+rmSync('dist', { recursive: true, force: true });
+mkdirSync('dist', { recursive: true });
 
-const sharedOptions = /** @type {import("esbuild").BuildOptions} */ ({
-  bundle: true,
-  minify: true,
-  target: "chrome109",
-  logLevel: "info",
+const npxCommand = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+
+execFileSync(process.execPath, ['scripts/download-figma-capture.js'], {
+    stdio: 'inherit',
 });
 
-await Promise.all([
-  esbuild.build({
-    ...sharedOptions,
-    entryPoints: ["src/popup.ts"],
-    outfile: "dist/popup.js",
-  }),
-  esbuild.build({
-    ...sharedOptions,
-    entryPoints: ["src/content.ts"],
-    outfile: "dist/content.js",
-  }),
-  esbuild.build({
-    ...sharedOptions,
-    entryPoints: ["src/injected.ts"],
-    outfile: "dist/injected.js",
-  }),
-]);
+const sharedOptions = /** @type {import("esbuild").BuildOptions} */ ({
+    bundle: true,
+    minify: true,
+    target: 'chrome109',
+    logLevel: 'info',
+});
 
-cpSync("src/popup.html", "dist/popup.html");
-cpSync("src/popup.css", "dist/popup.css");
-cpSync("manifest.json", "dist/manifest.json");
+await esbuild.build({
+    ...sharedOptions,
+    entryPoints: ['src/popup.ts'],
+    outfile: 'dist/popup.js',
+});
 
-console.log("Build complete → dist/");
+await esbuild.build({
+    ...sharedOptions,
+    entryPoints: ['src/content.ts'],
+    outfile: 'dist/content.js',
+});
+
+cpSync('src/popup.html', 'dist/popup.html');
+cpSync('src/icons', 'dist/icons', { recursive: true });
+cpSync('manifest.json', 'dist/manifest.json');
+
+execFileSync(
+    npxCommand,
+    [
+        '@tailwindcss/cli',
+        '-i',
+        './src/popup.css',
+        '-o',
+        './dist/popup.css',
+        '--minify',
+    ],
+    { stdio: 'inherit' },
+);
+
+console.log('Build complete → dist/');
