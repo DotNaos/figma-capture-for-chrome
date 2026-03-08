@@ -1,0 +1,1 @@
+# figma-capture-for-chrome
