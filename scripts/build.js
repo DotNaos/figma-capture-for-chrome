@@ -33,6 +33,7 @@ await esbuild.build({
 
 cpSync('src/popup.html', 'dist/popup.html');
 cpSync('src/icons', 'dist/icons', { recursive: true });
+cpSync('src/vendor', 'dist/vendor', { recursive: true });
 cpSync('manifest.json', 'dist/manifest.json');
 
 execFileSync(

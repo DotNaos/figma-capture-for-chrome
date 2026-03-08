@@ -10,7 +10,14 @@
     body {
         @apply m-0 antialiased text-white;
         background: #1f1f1f;
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-family:
+            Inter,
+            ui-sans-serif,
+            system-ui,
+            -apple-system,
+            BlinkMacSystemFont,
+            'Segoe UI',
+            sans-serif;
     }
 }
 
@@ -20,7 +27,7 @@
     }
 
     .popup-card {
-        @apply flex flex-col gap-4 overflow-hidden rounded-[8px] bg-[#2c2c2c] py-4;
+        @apply flex flex-col gap-4 overflow-hidden rounded-lg bg-[#2c2c2c] py-4;
     }
 
     .popup-header {
@@ -32,7 +39,7 @@
     }
 
     .primary-button {
-        @apply inline-flex h-8 items-center justify-center gap-2 rounded-[6px] border border-[#2a9bf0] bg-[#0c8ce9] px-3 text-[11px] leading-4 font-normal tracking-[0.005em] text-white transition hover:bg-[#1b97ef] focus:outline-none focus:ring-2 focus:ring-[#63b7f8]/40 disabled:cursor-not-allowed disabled:opacity-70;
+        @apply inline-flex h-8 items-center justify-center gap-2 rounded-md border border-[#2a9bf0] bg-[#0c8ce9] px-3 text-[11px] leading-4 font-normal tracking-[0.005em] text-white transition hover:bg-[#1b97ef] focus:outline-none focus:ring-2 focus:ring-[#63b7f8]/40 disabled:cursor-not-allowed disabled:opacity-70;
     }
 
     .secondary-button {
@@ -40,7 +47,7 @@
     }
 
     .button-icon {
-        @apply inline-flex h-[18px] w-[18px] items-center justify-center;
+        @apply inline-flex h-4.5 w-4.5 items-center justify-center;
     }
 
     .button-icon svg {
@@ -68,11 +75,11 @@
     }
 
     .field-input {
-        @apply h-8 w-full rounded-[5px] border border-[#383838] bg-[#383838] px-[7px] text-[11px] leading-4 font-normal text-white outline-none transition placeholder:text-white/50 focus:border-[#4b4b4b] focus:ring-2 focus:ring-white/6;
+        @apply h-8 w-full rounded-[5px] border border-[#383838] bg-[#383838] px-1.75 text-[11px] leading-4 font-normal text-white outline-none transition placeholder:text-white/50 focus:border-[#4b4b4b] focus:ring-2 focus:ring-white/6;
     }
 
     .status-banner {
-        @apply mx-4 rounded-[6px] border px-3 py-2 text-[11px] leading-4 font-normal shadow-lg;
+        @apply mx-4 rounded-md border px-3 py-2 text-[11px] leading-4 font-normal shadow-lg;
     }
 
     .status-success {
@@ -85,5 +92,32 @@
 
     .save-row {
         @apply flex justify-end px-4;
+    }
+
+    .debug-section {
+        @apply mx-4 flex flex-col gap-2 rounded-md border border-white/8 bg-black/10 px-3 py-3;
+    }
+
+    .debug-header-row {
+        @apply flex items-center justify-between gap-2;
+    }
+
+    .debug-actions {
+        @apply flex items-center gap-2;
+    }
+
+    .debug-heading {
+        @apply m-0 text-[11px] leading-4 font-semibold tracking-[0.01em] text-white;
+    }
+
+    .debug-action-button {
+        @apply rounded-[5px] border border-white/8 px-2 py-1 text-[10px] leading-3 text-white/80 transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-white/10;
+    }
+
+    .debug-log {
+        @apply m-0 max-h-32 overflow-auto whitespace-pre-wrap wrap-break-word rounded-[5px] bg-black/15 p-2 text-[10px] leading-4 text-white/70;
+        font-family:
+            ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+            'Liberation Mono', 'Courier New', monospace;
     }
 }

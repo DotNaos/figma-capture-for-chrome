@@ -6,7 +6,7 @@
         <title>Figma Capture</title>
         <link rel="stylesheet" href="popup.css" />
     </head>
-    
+
     <body>
         <main class="popup-shell">
             <section class="popup-card">
@@ -50,19 +50,29 @@
                         </div>
                         </section>
 <div class="save-row">
-    <button id="btn-save" class="secondary-button" type="button">
-        <span class="button-icon button-icon--small" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5 4h11l3 3v13H5V4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
-                <path d="M8 4v5h8V4" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
-                <path d="M9 20v-5h6v5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
-            </svg>
-        </span>
-        <span>Save Config</span>
-    </button>
+                    <button id="btn-save" class="secondary-button" type="button">
+                        <span class="button-icon button-icon--small" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 4h11l3 3v13H5V4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+                                <path d="M8 4v5h8V4" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+                                <path d="M9 20v-5h6v5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <span>Save Config</span>
+                    </button>
                 </div>
+<section class="debug-section">
+    <div class="debug-header-row">
+        <h2 class="debug-heading">Debug log</h2>
+        <div class="debug-actions">
+            <button id="btn-copy-debug" class="debug-action-button" type="button">Copy</button>
+            <button id="btn-clear-debug" class="debug-action-button" type="button">Clear</button>
+        </div>
+    </div>
+    <pre id="debug-log" class="debug-log">No debug entries yet.</pre>
+</section>
             </section>
-            </main>
+        </main>
         <script src="popup.js"></script>
-        </body>
+    </body>
 </html>
