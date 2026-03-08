@@ -12,7 +12,7 @@ A Chrome extension (Manifest V3) that captures the current page into Figma from 
 
 ## Project structure
 
-```
+```text
 manifest.json          Extension manifest (MV3)
 src/
   popup.html           Popup UI
@@ -24,7 +24,7 @@ scripts/
   build.js             esbuild-based build script
   package.js           Zip packaging script
 .github/workflows/
-  build.yml            CI – build on push to main, publish artifact on release
+  build.yml            CI – build on push to main and v*-tags, publish artifact and release asset
 ```
 
 ## Local development
@@ -55,16 +55,14 @@ After making code changes, run `npm run build` again and click the refresh icon 
 
 Open the popup by clicking the extension icon in the Chrome toolbar.
 
-| Field | Description |
-|-------|-------------|
-| **Capture ID** | The `captureId` to pass to `window.figma.captureForDesign`. Leave empty for clipboard mode. |
-| **Endpoint** | The `endpoint` URL for Figma. Leave empty for clipboard mode. |
+- **Capture ID** – The `captureId` to pass to `window.figma.captureForDesign`. Leave empty for clipboard mode.
+- **Endpoint** – The `endpoint` URL for Figma. Leave empty for clipboard mode.
 
 Click **Save config** to persist the values in Chrome sync storage.
 
 You can also override these values temporarily via the page URL hash:
 
-```
+```text
 https://example.com/page#figmacapture=my-id&figmaendpoint=https://...
 ```
 
@@ -74,11 +72,27 @@ Hash params take precedence over stored config for that capture only.
 
 GitHub Actions builds and packages the extension automatically.
 
-### Automatic (recommended)
+### Automatic snapshots from `main`
 
-1. Create a new GitHub Release and publish it.
-2. The [Build workflow](.github/workflows/build.yml) runs, builds the extension, and attaches `figma-capture.zip` to the release.
-3. Download `figma-capture.zip` from the release assets and upload it to the Chrome Web Store.
+Each push to `main`:
+
+1. runs the build and packaging steps,
+2. uploads `figma-capture.zip` as a workflow artifact, and
+3. creates or updates the prerelease `main-latest` with the ZIP attached.
+
+This is useful for testing the latest `main` build without creating a versioned release each time.
+
+### Versioned releases from tags
+
+Push a Git tag matching `v*` (for example `v1.0.1`) to create a GitHub Release automatically.
+
+The [Build and Release workflow](.github/workflows/build.yml) will:
+
+1. build the extension,
+2. package `figma-capture.zip`, and
+3. publish a GitHub Release for that tag with the ZIP attached.
+
+Download `figma-capture.zip` from the release assets and upload it to the Chrome Web Store.
 
 ### Manual
 
