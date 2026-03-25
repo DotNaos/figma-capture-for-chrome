@@ -51,6 +51,30 @@ Load the extension in Chrome:
 
 After making code changes, run `npm run build` again and click the refresh icon on the extension card.
 
+## React / Electron drop-in button
+
+Need the capture inside an Electron renderer without the Chrome extension? Copy `examples/FigmaCaptureButton.tsx` into your app and render it alongside your root component:
+
+```tsx
+import { FigmaCaptureButton } from "./FigmaCaptureButton";
+
+export function App() {
+  return (
+    <>
+      {/* …your app… */}
+      {process.env.NODE_ENV === "development" && (
+        <FigmaCaptureButton
+          captureId="your-capture-id"
+          endpoint="https://your-figma-endpoint"
+        />
+      )}
+    </>
+  );
+}
+```
+
+The button sticks to the bottom-right with the Figma mark. On click it lazily loads Figma's `capture.js` from `https://mcp.figma.com/mcp/html-to-design/capture.js` and calls `window.figma.captureForDesign` with the provided `captureId`, `endpoint`, and `selector` (defaults to `body`). You can override the script URL or selector via props if needed.
+
 ## Configuration
 
 Open the popup by clicking the extension icon in the Chrome toolbar.
